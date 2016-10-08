@@ -1,6 +1,4 @@
-* {
-	font-family: "Helvetica";
-}
+* { font-family: "Helvetica" }
 
 h1 {
 	text-align: center;
@@ -8,7 +6,7 @@ h1 {
 	color: ;
 }
 
-#puzzle {
+#board {
 	padding-top: 50px;
 	margin: auto;
 	width: 270px;

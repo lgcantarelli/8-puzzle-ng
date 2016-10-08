@@ -9,10 +9,14 @@
     <div ng-controller="eightPuzzleCtrl">
       <h1>jogo do oito</h1>
 
-      <div id="puzzle">
-        <div class="position" ng-repeat="position in positions">
+      <div id="board">
+        <div class="position" ng-repeat="position in board">
           {{ position }}
         </div>
+      </div>
+
+      <div id="results">
+        hamming priority: {{ hammingPriority() }}
       </div>
     </div>
   </body>
