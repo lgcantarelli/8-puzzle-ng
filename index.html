@@ -7,7 +7,13 @@
   </head>
   <body>
     <div ng-controller="eightPuzzleCtrl">
-      <h1>Jogo do Oito</h1>
+      <h1>jogo do oito</h1>
+
+      <div id="puzzle">
+        <div class="position" ng-repeat="position in positions">
+          {{ position }}
+        </div>
+      </div>
     </div>
   </body>
 </html>

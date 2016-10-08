@@ -4,6 +4,20 @@
 
 h1 {
 	text-align: center;
-	font-weight: 400;
+	font-weight: 200;
 	color: ;
+}
+
+#puzzle {
+	padding-top: 50px;
+	margin: auto;
+	width: 270px;
+}
+
+.position {
+	font-size: 60px;
+	display: inline-block;
+	padding-left: 25px;
+	padding-right: 25px;
+	padding-top: 15px;
 }
