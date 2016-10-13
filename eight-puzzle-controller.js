@@ -1,8 +1,8 @@
 angular.module('eightPuzzle', [])
   .controller('eightPuzzleCtrl', function($scope) {
-    $scope.board = [0, 1, 3,
-                    4, 2, 5,
-                    7, 8, 6];
+    $scope.board = [1, 2, 3,
+                    0, 5, 6,
+                    4, 7, 8];
 
     $scope.goalBoard = [1, 2, 3, 4, 5, 6, 7, 8, 0];
     $scope.moves = 0;
@@ -67,12 +67,12 @@ angular.module('eightPuzzle', [])
 
       return $scope.priorityQueue.push({
         board: board,
-        priority: wrongPositions + $scope.moves
+        priority: wrongPositions + $scope.moves,
       });
     }
 
-    $scope.setMinimumPriorityState = function() {
-      var priorities  = $scope.priorityQueue.map(function(state) { state.priority })
+    $scope.move = function() {
+      var priorities  = $scope.priorityQueue.map(function(state) { return state.priority });
       var minPriority =  Math.min(priorities);
 
       var minPriorityState = $scope.priorityQueue.filter(function(state) {
@@ -83,11 +83,9 @@ angular.module('eightPuzzle', [])
       $scope.board = $scope.priorityQueue.splice(index, 1)[0].board;
     }
 
-    $scope.pushNeighboringStates = function() {
+    $scope.checkAvailablePositions = function() {
       var zeroIndex = $scope.board.indexOf(0);
       var zeroNeighboringPositions = getZeroNeighboringPositions(zeroIndex);
-
-      console.debug(zeroNeighboringPositions);
 
       zeroNeighboringPositions.forEach(function(position) {
         var newBoard = $scope.board.slice();
@@ -100,14 +98,17 @@ angular.module('eightPuzzle', [])
 
     $scope.solvePuzzle = function() {
       $scope.pushHammingPriority($scope.board); // push first state into priority queue
-      $scope.setMinimumPriorityState();
-      $scope.pushNeighboringStates();
-
-      console.debug($scope.priorityQueue);
+      $scope.move();
+      $scope.checkAvailablePositions();
 
       while (!($scope.board.equals($scope.goalBoard))) {
-        $scope.setMinimumPriorityState();
-        $scope.pushNeighboringStates();
+        $scope.checkAvailablePositions();
+        $scope.move();
+
+
+        if ($scope.moves == 5) {
+          return null;
+        }
       }
     }
 
