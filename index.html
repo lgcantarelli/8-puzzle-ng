@@ -1,13 +1,18 @@
 <!doctype html>
 <html ng-app="eightPuzzle">
   <head>
+    <title>Jogo do Oito using A* - by @lgcantarelli</title>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
     <script src="eight-puzzle-controller.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
     <div ng-controller="eightPuzzleCtrl">
-      <h1>jogo do oito</h1>
+      <div class="game-title">
+        <h1>Jogo do Oito</h1>
+        <p>by <a target="_blank" href="https://twitter.com/lgcantarelli">@lgcantarelli</a></p>
+      </div>
 
       <div id="board">
         <div class="position" ng-repeat="position in board">
@@ -16,7 +21,7 @@
       </div>
 
       <div id="results">
-        
+
       </div>
     </div>
   </body>
