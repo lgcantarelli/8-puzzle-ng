@@ -1,8 +1,8 @@
 angular.module('eightPuzzle', [])
   .controller('eightPuzzleCtrl', function($scope) {
     $scope.board = [1, 2, 3,
-                    0, 5, 6,
-                    4, 7, 8];
+                    4, 5, 6,
+                    7, 8, 0];
 
     $scope.goalBoard = [1, 2, 3, 4, 5, 6, 7, 8, 0];
     $scope.moves = 0;
@@ -42,7 +42,7 @@ angular.module('eightPuzzle', [])
         case 2:
           return [1, 5];
         case 3:
-          return [0, 4, 5];
+          return [0, 4, 6];
         case 4:
           return [1, 3, 5, 7];
         case 5:
@@ -59,15 +59,17 @@ angular.module('eightPuzzle', [])
     $scope.pushHammingPriority = function(board) {
       var wrongPositions = 0;
 
-      board.forEach(function(position, index) {
-        if (position != 0 && position != index + 1) {
+      board.forEach(function(value, index) {
+        if (value != 0 && value != index) {
+          wrongPositions++;
+        } else if (value == 0 && index != 8) {
           wrongPositions++;
         }
       })
 
       return $scope.priorityQueue.push({
         board: board,
-        priority: wrongPositions + $scope.moves,
+        priority: wrongPositions,
       });
     }
 
@@ -80,14 +82,31 @@ angular.module('eightPuzzle', [])
       })
 
       var index = $scope.priorityQueue.indexOf(minPriorityState);
+      $scope.lastMove = $scope.board.indexOf(0);
       $scope.board = $scope.priorityQueue.splice(index, 1)[0].board;
+      $scope.moves++;
     }
 
     $scope.checkAvailablePositions = function() {
       var zeroIndex = $scope.board.indexOf(0);
       var zeroNeighboringPositions = getZeroNeighboringPositions(zeroIndex);
+      var lastMoveIndex = zeroNeighboringPositions.indexOf($scope.lastMove);
+      var positions = [];
 
-      zeroNeighboringPositions.forEach(function(position) {
+      console.info(lastMoveIndex);
+
+      console.info(zeroNeighboringPositions);
+
+      if (lastMoveIndex > -1) {
+        zeroNeighboringPositions.slice().splice(lastMoveIndex, 1);
+        var positions = zeroNeighboringPositions;
+      } else {
+        var positions = zeroNeighboringPositions;
+      }
+
+      console.info(positions);
+
+      positions.forEach(function(position) {
         var newBoard = $scope.board.slice();
 
         newBoard[zeroIndex] = newBoard[position];
@@ -97,16 +116,17 @@ angular.module('eightPuzzle', [])
     }
 
     $scope.solvePuzzle = function() {
-      $scope.pushHammingPriority($scope.board); // push first state into priority queue
-      $scope.move();
-      $scope.checkAvailablePositions();
+      $scope.lastMove = $scope.board.indexOf(0);
+      console.info($scope.lastMove)
 
       while (!($scope.board.equals($scope.goalBoard))) {
         $scope.checkAvailablePositions();
         $scope.move();
+        $scope.priorityQueue = [];
 
+        console.info($scope.board)
 
-        if ($scope.moves == 5) {
+        if ($scope.moves == 50000) {
           return null;
         }
       }
