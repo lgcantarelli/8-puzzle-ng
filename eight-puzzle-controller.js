@@ -43,29 +43,37 @@ angular.module('eightPuzzle', [])
     }
 
     $scope.move = function() {
-      $scope.lastMove  = $scope.board.indexOf(0);
+      $scope.lastZeroIndex = $scope.board.indexOf(0);
       $scope.board     = $scope.getMinimumPriorityState().board;
       $scope.zeroIndex = $scope.board.indexOf(0); 
       $scope.moves++;
     }
 
-    $scope.pushHammingPriority = function(board) {
-      var wrongPositions = 0;
+    $scope.pushManhattanPriority = function(board) {
+      var manhattanSum = 0;
+      var manhattanCoordinates = {
+        0: [0, 0], 1: [1, 0], 2: [2, 0],
+        3: [0, 1], 4: [1, 1], 5: [2, 1],
+        6: [0, 2], 7: [1, 2], 8: [2, 2]
+      }
 
       board.forEach(function(value, index) {
-        if (value != 0 && value != index + 1) {
-          wrongPositions++;
-        } else if (value == 0 && index != 8) {
-          wrongPositions++;
+        if (value != 0) {
+          var x1 = manhattanCoordinates[index][0];
+          var y1 = manhattanCoordinates[index][1];
+          var x2 = manhattanCoordinates[value - 1][0];
+          var y2 = manhattanCoordinates[value - 1][1];
+
+          manhattanSum += Math.abs(x1 - x2) + Math.abs(y1 - y2);
         }
       })
 
-      // console.info(board, wrongPositions, $scope.moves)
-
-      return $scope.priorityQueue.push({
+      var state = {
         board: board,
-        priority: wrongPositions + $scope.moves,
-      });
+        priority: manhattanSum + $scope.moves
+      }
+
+      $scope.priorityQueue.push(state);
     }
 
     $scope.getNeighboringPositions = function() {
@@ -99,30 +107,26 @@ angular.module('eightPuzzle', [])
        neighboringPositions.splice(lastZeroIndex, 1);
       }
 
-      console.info(neighboringPositions);
-      console.info($scope.board);
-
       neighboringPositions.forEach(function(position) {
         var newBoard = $scope.board.slice();
 
         newBoard[$scope.zeroIndex] = newBoard[position];
         newBoard[position] = 0;
-        $scope.pushHammingPriority(newBoard);
+        $scope.pushManhattanPriority(newBoard);
       })
     }
 
     $scope.solvePuzzle = function() {
-      $scope.board = [0, 2, 3,
-                      4, 5, 6,
-                      8, 7, 1];
+      $scope.board = [5, 2, 1,
+                      0, 6, 4,
+                      8, 3, 7];
 
-      $scope.goalBoard = [1, 2, 3, 4, 5, 6, 7, 8, 0];
       $scope.moves = 0;
       $scope.priorityQueue = [];
       $scope.zeroIndex     = $scope.board.indexOf(0);
       $scope.lastZeroIndex = $scope.zeroIndex;
 
-      while (!($scope.board.equals($scope.goalBoard))) {
+      while (!($scope.board.equals([1, 2, 3, 4, 5, 6, 7, 8, 0]))) {
         $scope.pushNeighboringStates();
         $scope.move();
 
