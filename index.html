@@ -1,7 +1,7 @@
 <!doctype html>
 <html ng-app="eightPuzzle">
   <head>
-    <title>Jogo do Oito using A* - by @lgcantarelli</title>
+    <title>Jogo do Oito</title>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
     <script src="eight-puzzle-controller.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
@@ -10,17 +10,46 @@
   <body>
     <div ng-controller="eightPuzzleCtrl">
       <div class="game-title">
-        <h1>Jogo do Oito</h1>
-        <p>by <a target="_blank" href="https://github.com/lgcantarelli">@lgcantarelli</a></p>
+        <h1>Jogo do Oito em A*</h1>
+        <p><a target="_blank" href="https://github.com/lgcantarelli/8-puzzle-ng">github repo</a></p>
       </div>
 
+      <p class="info">Tabuleiro inicial</p>
+
       <div id="board">
-        <div class="position" ng-repeat="position in board">
-          {{ position }}
+        <div class="input-position" ng-repeat="value in initialBoard track by $index">
+          <input ng-model="var" class="input-position" id="input{{ $index }}" ng-change="changeInitialBoard($index)" ng-value="value"></input>
+        </div>
+      </div>
+
+      <p class="info" ng-show="board.length > 0">Tabuleiro final</p>
+
+      <div id="board">
+        <div class="position" ng-repeat="value in board">
+          {{ value }}
+        </div>
+      </div>
+
+      <div class="actions">
+        <div>
+          <!-- <a ng-click="sortInitialBoard()"> Embaralhar tabuleiro inicial</a> -->
+        </div>
+        <div>
+          <a ng-click="solvePuzzle()"> Resolver tabuleiro</a>
         </div>
       </div>
 
       <div id="results">
+        <p class="results-title">Resultados</p>
+
+        <p class="result"> Numero de estados para achar o estado meta: {{ moves }} </p>
+        <p class="result"> Numero de estados testados: {{ testedMoves }} </p>
+      </div>
+
+      <div id="board" class="board-results" ng-repeat="board in reachedBoards">
+        <div class="position" ng-repeat="position in board">
+          {{ position }}
+        </div>
       </div>
     </div>
   </body>

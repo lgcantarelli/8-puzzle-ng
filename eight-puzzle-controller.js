@@ -1,5 +1,9 @@
 angular.module('eightPuzzle', [])
-  .controller('eightPuzzleCtrl', function($scope) {
+  .controller('eightPuzzleCtrl', function($scope, $window) {
+    $scope.initialBoard = [1, 2, 3, 4, 5, 6, 7, 8, 0];
+    $scope.board = [];
+    $scope.changedValue = null;
+
     Array.prototype.equals = function(array) {
       // if the other array is a falsy value, return
       if (!array)
@@ -44,8 +48,9 @@ angular.module('eightPuzzle', [])
 
     $scope.move = function() {
       $scope.lastZeroIndex = $scope.board.indexOf(0);
-      $scope.board     = $scope.getMinimumPriorityState().board;
-      $scope.zeroIndex = $scope.board.indexOf(0); 
+      $scope.board = $scope.getMinimumPriorityState().board;
+      $scope.reachedBoards.push($scope.board);
+      $scope.zeroIndex = $scope.board.indexOf(0);
       $scope.moves++;
     }
 
@@ -101,9 +106,10 @@ angular.module('eightPuzzle', [])
 
     $scope.pushNeighboringStates = function() {
       var neighboringPositions = $scope.getNeighboringPositions();
+      
+      // if previous state is neighboring, exclude it
       var lastZeroIndex = neighboringPositions.indexOf($scope.lastZeroIndex);
-
-      if (lastZeroIndex > -1) { // if previous state is neighboring, exclude it
+      if (lastZeroIndex > -1) { 
        neighboringPositions.splice(lastZeroIndex, 1);
       }
 
@@ -112,35 +118,43 @@ angular.module('eightPuzzle', [])
 
         newBoard[$scope.zeroIndex] = newBoard[position];
         newBoard[position] = 0;
+        $scope.testedMoves++;
         $scope.pushManhattanPriority(newBoard);
       })
     }
 
     $scope.solvePuzzle = function() {
-      $scope.board = [5, 2, 1,
-                      0, 6, 4,
-                      8, 3, 7];
-
+      $scope.board = $scope.initialBoard.slice();
       $scope.moves = 0;
+      $scope.testedMoves = 0;
       $scope.priorityQueue = [];
+      $scope.reachedBoards = [];
       $scope.zeroIndex     = $scope.board.indexOf(0);
       $scope.lastZeroIndex = $scope.zeroIndex;
 
       while (!($scope.board.equals([1, 2, 3, 4, 5, 6, 7, 8, 0]))) {
         $scope.pushNeighboringStates();
         $scope.move();
+        $scope.priorityQueue = [];
 
-        if ($scope.moves == 100) { return null }
+        if ($scope.moves == 150) { return null }
       }
+
+      $scope.movesToGoal = $scope.moves - 1;
     }
 
-    $scope.solvePuzzle();
+    // $scope.sortInitialBoard = function() {
+    //   var j, x, i;
+    //   for (i = $scope.initialBoard.length; i; i--) {
+    //       j = Math.floor(Math.random() * i);
+    //       x = $scope.initialBoard[i - 1];
+    //       $scope.initialBoard[i - 1] = $scope.initialBoard[j];
+    //       $scope.initialBoard[j] = x;
+    //   }
+    // }
 
-    // how-to (A*)
-
-    // the game starts with random positions, 0 moves and next state null
-    // inserts the current state in the priority queue
-    // delete the minimum priority state from the queue (? on game start)
-    // inserts all states that can be reached in one move onto the priority queue
-    // repeat this until the removed state from the queue is the state goal
+    $scope.changeInitialBoard = function(index) {
+      var newInputValue = parseInt($window.document.getElementById("input" + index)["value"]);
+      $scope.initialBoard[index] = newInputValue;
+    }
   });
